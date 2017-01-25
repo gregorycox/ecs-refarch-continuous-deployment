@@ -24,7 +24,6 @@ Parameters:
     Description: >
       Token for the user specified above. (https://github.com/settings/tokens)
 
-
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterLabels:
@@ -50,16 +49,16 @@ Resources:
   Cluster:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/ecs-refarch-continuous-deployment/templates/ecs-cluster.yaml
+      TemplateURL: https://s3.amazonaws.com/codedeploy-test-us-east-1/ecs-cluster.yaml
       Parameters:
         SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
-        Subnets: !GetAtt VPC.Outputs.Subnets
-        VpcId: !GetAtt VPC.Outputs.VpcId
+        Subnets: "subnet-cfa813e4,subnet-04621f73"
+        VpcId: vpc-67fada02
 
   DeploymentPipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/ecs-refarch-continuous-deployment/templates/deployment-pipeline.yaml
+      TemplateURL: https://s3.amazonaws.com/codedeploy-test-us-east-1/deployment-pipeline.yaml
       Parameters:
         Cluster: !GetAtt Cluster.Outputs.ClusterName
         GitHubUser: !Ref GitHubUser
@@ -74,29 +73,18 @@ Resources:
   LoadBalancer:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/ecs-refarch-continuous-deployment/templates/load-balancer.yaml
+      TemplateURL: https://s3.amazonaws.com/codedeploy-test-us-east-1/load-balancer.yaml
       Parameters:
-        Subnets: !GetAtt VPC.Outputs.Subnets
-        VpcId: !GetAtt VPC.Outputs.VpcId
+        Subnets: "subnet-cfa813e4,subnet-04621f73"
+        VpcId: "vpc-67fada02"
 
   Service:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/ecs-refarch-continuous-deployment/templates/service.yaml
+      TemplateURL: https://s3.amazonaws.com/codedeploy-test-us-east-1/service.yaml
       Parameters:
         Cluster: !GetAtt Cluster.Outputs.ClusterName
         TargetGroup: !GetAtt LoadBalancer.Outputs.TargetGroup
-
-  VPC:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: https://s3.amazonaws.com/ecs-refarch-continuous-deployment/templates/vpc.yaml
-      Parameters:
-        Name: !Ref AWS::StackName
-        VpcCIDR: 10.215.0.0/16
-        Subnet1CIDR: 10.215.10.0/24
-        Subnet2CIDR: 10.215.20.0/24
-
 
 Outputs:
   ServiceUrl:

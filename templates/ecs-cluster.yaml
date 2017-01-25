@@ -14,8 +14,7 @@ Parameters:
     Type: AWS::EC2::SecurityGroup::Id
 
   VpcId:
-    Type: AWS::EC2::VPC::Id
-
+    Type: String
 
 Mappings:
   AWSRegionToAMI:
@@ -89,7 +88,7 @@ Resources:
       MinSize: !Ref ClusterSize
       MaxSize: !Ref ClusterSize
       DesiredCapacity: !Ref ClusterSize
-      Tags: 
+      Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName} - ECS Host
           PropagateAtLaunch: true
